@@ -33,41 +33,126 @@ const getCanvasRenderingContext2D = (
   return context;
 };
 
-function drawChariot(x: number, y: number, radius: number) {
-  zooCtx.save();
-  zooCtx.beginPath();
+enum Direction {
+  H,
+  V,
+}
+
+class Point2D {
+  public x: number;
+  public y: number;
+  public r: number;
+  constructor(x: number, y: number, r: number) {
+    this.x = x;
+    this.y = y;
+    this.r = r;
+  }
+}
+
+enum Loc {
+  L,
+  R,
+  T,
+  B,
+}
+
+const verbose = true;
+const debug = false;
+let hide = true;
+let actived = false;
+
+const ctx: CanvasRenderingContext2D = getCanvasRenderingContext2D(
+  getCanvasElementById("field")
+);
+// Quetzalcoatl 89.5 110.5
+// Behemoth     89.5 110.5
+// Python       (79.5 (84.5 105.5)) (79.5 (94.5 115.5))  (121 (84.5 105.5)) (121 (94.5 94.5))
+// (80, 120)(120, 120)
+// (80, 80)(120, 80)
+const size = 400;
+let transparence = getQueryletiable("transparence");
+if (transparence === "false") {
+  transparence = "0.5";
+}
+addUnlockText();
+getCanvasElementById(
+  "field"
+).style.background = `rgba(82, 82, 82,${transparence})`;
+// ctx.fillStyle = 'rgba(82, 82, 82, 0.5)'
+// getCanvasElementById('field').style.width = '400px'
+// getCanvasElementById('field').style.height = '400px'
+// ctx.scale(1, -1);
+// ctx.translate(0, -height);
+const scale = size / (120 - 80);
+const playerPos = new Point2D(100, 100, 0);
+let isClockwise = 0;
+
+const zoo = document.createElement("canvas");
+zoo.width = size;
+zoo.height = size;
+const zooCtx: CanvasRenderingContext2D = zoo.getContext("2d")!;
+zooCtx.fillStyle = "rgba(255,249,192,0.8)";
+zooCtx.strokeStyle = zooCtx.fillStyle;
+// const pythons = document.createElement("canvas");
+// pythons.width = size;
+// pythons.height = size;
+// const pythonsCtx: CanvasRenderingContext2D = pythons.getContext("2d")!;
+// pythonsCtx.fillStyle = "rgba(255,249,192,0.8)";
+
+const fire = document.createElement("canvas");
+fire.width = size;
+fire.height = size;
+const fireCtx: CanvasRenderingContext2D = fire.getContext("2d")!;
+fireCtx.fillStyle = "rgba(255,249,192,0.8)";
+
+const player = document.createElement("canvas");
+player.width = size;
+player.height = size;
+const playerCtx: CanvasRenderingContext2D = player.getContext("2d")!;
+playerCtx.fillStyle = "#66CCFF";
+playerCtx.strokeStyle = playerCtx.fillStyle;
+// draw();
+window.requestAnimationFrame(draw);
+
+function drawChariot(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  radius: number
+) {
+  ctx.save();
+  ctx.beginPath();
   // ctx.fillStyle = "rgba(255,249,192,0.5)";
   x = (x - 80) * scale;
   y = (y - 80) * scale;
   radius = radius * scale;
   // x = (x - 90) * scale;
-  zooCtx.arc(x, y, radius, 0, 2 * Math.PI);
-  zooCtx.closePath();
-  zooCtx.fill();
-  zooCtx.restore();
+  ctx.arc(x, y, radius, 0, 2 * Math.PI);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
 }
 
-function drawDynamo(x: number, y: number, r1: number, r2: number) {
-  zooCtx.save();
+function drawDynamo(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  r1: number,
+  r2: number
+) {
+  ctx.save();
   // ctx.fillStyle = "rgba(255,249,192,0.8)";
   x = (x - 80) * scale;
   y = (y - 80) * scale;
   r1 = r1 * scale;
   r2 = r2 * scale;
-  zooCtx.beginPath();
-  zooCtx.arc(x, y, r1, 0, Math.PI * 2);
-  zooCtx.closePath();
-  zooCtx.fill();
-  zooCtx.globalCompositeOperation = "destination-out";
-  zooCtx.beginPath();
-  zooCtx.arc(x, y, r2, 0, Math.PI * 2);
-  zooCtx.closePath();
-  zooCtx.fill();
-  zooCtx.restore();
-}
-enum Direction {
-  H,
-  V,
+
+  ctx.save();
+  ctx.lineWidth = Math.abs(r1 - r2);
+  ctx.beginPath();
+  ctx.arc(x, y, (r1 + r2) / 2, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.restore();
 }
 
 function drawStripe(
@@ -117,47 +202,51 @@ function drawArc(
   ctx.restore();
 }
 
-// Quetzalcoatl 89.5 110.5
-// Behemoth     89.5 110.5
-// Python       (79.5 (84.5 105.5)) (79.5 (94.5 115.5))  (121 (84.5 105.5)) (121 (94.5 94.5))
-enum Loc {
-  L,
-  R,
-  T,
-  B,
-}
-
 function drawQuetzalcoatl(h: Loc, v: Loc) {
   if (verbose) {
     console.log(`月环:${h},${v}`);
   }
   let x = h == Loc.L ? 89.5 : 110.5;
   let y = v == Loc.T ? 89.5 : 110.5;
-  drawDynamo(x, y, 15, 5);
+  drawDynamo(zooCtx, x, y, 15, 5);
 }
+
 function drawBehemoth(h: Loc, v: Loc) {
   if (verbose) {
     console.log(`钢铁:${h},${v}`);
   }
   let x = h == Loc.L ? 89.5 : 110.5;
   let y = v == Loc.T ? 89.5 : 110.5;
-  drawChariot(x, y, 15);
+  drawChariot(zooCtx, x, y, 15);
 }
+
 function drawPythons(p: Loc) {
   switch (p) {
     case Loc.T:
+      if (verbose) {
+        console.log(`上蛇`);
+      }
       drawStripe(zooCtx, 79.5, 84.5, 42, 11, Direction.H);
       drawStripe(zooCtx, 79.5, 105.5, 42, 11, Direction.H);
       break;
     case Loc.B:
+      if (verbose) {
+        console.log(`下蛇`);
+      }
       drawStripe(zooCtx, 79.5, 94.5, 42, 11, Direction.H);
       drawStripe(zooCtx, 79.5, 115.5, 42, 11, Direction.H);
       break;
     case Loc.L:
+      if (verbose) {
+        console.log(`左蛇`);
+      }
       drawStripe(zooCtx, 84.5, 79.5, 42, 11, Direction.V);
       drawStripe(zooCtx, 105.5, 79.5, 42, 11, Direction.V);
       break;
     case Loc.R:
+      if (verbose) {
+        console.log(`右蛇`);
+      }
       drawStripe(zooCtx, 94.5, 79.5, 42, 11, Direction.V);
       drawStripe(zooCtx, 115.5, 79.5, 42, 11, Direction.V);
       break;
@@ -175,70 +264,6 @@ function drawFires(isHorizontal: boolean) {
   end = (startAngle + 90) * (Math.PI / 180);
   drawArc(fireCtx, 100, 100, 30, start, end);
 }
-
-class Point2D {
-  public x: number;
-  public y: number;
-  public r: number;
-  constructor(x: number, y: number, r: number) {
-    this.x = x;
-    this.y = y;
-    this.r = r;
-  }
-}
-const verbose = true;
-const debug = true;
-
-let hide = true;
-let zoneID = 0;
-const ctx: CanvasRenderingContext2D = getCanvasRenderingContext2D(
-  getCanvasElementById("field")
-);
-const size = 400;
-let transparence = getQueryletiable("transparence");
-if (transparence === "false") {
-  transparence = "0.5";
-}
-addUnlockText();
-getCanvasElementById(
-  "field"
-).style.background = `rgba(82, 82, 82,${transparence})`;
-// ctx.fillStyle = 'rgba(82, 82, 82, 0.5)'
-// getCanvasElementById('field').style.width = '400px'
-// getCanvasElementById('field').style.height = '400px'
-// ctx.scale(1, -1);
-// ctx.translate(0, -height);
-const scale = size / (120 - 80);
-const playerPos = new Point2D(100, 100, 0);
-let isClockwise = 0;
-
-const zoo = document.createElement("canvas");
-zoo.width = size;
-zoo.height = size;
-const zooCtx: CanvasRenderingContext2D = zoo.getContext("2d")!;
-zooCtx.fillStyle = "rgba(255,249,192,0.8)";
-
-const pythons = document.createElement("canvas");
-pythons.width = size;
-pythons.height = size;
-const pythonsCtx: CanvasRenderingContext2D = pythons.getContext("2d")!;
-pythonsCtx.fillStyle = "rgba(255,249,192,0.8)";
-
-const fire = document.createElement("canvas");
-fire.width = size;
-fire.height = size;
-const fireCtx: CanvasRenderingContext2D = fire.getContext("2d")!;
-fireCtx.fillStyle = "rgba(255,249,192,0.8)";
-
-const player = document.createElement("canvas");
-player.width = size;
-player.height = size;
-const playerCtx: CanvasRenderingContext2D = player.getContext("2d")!;
-playerCtx.fillStyle = "#66CCFF";
-// (80, 120)(120, 120)
-// (80, 80)(120, 80)
-// draw();
-window.requestAnimationFrame(draw);
 
 function showExample() {
   drawBehemoth(Loc.L, Loc.T);
@@ -262,18 +287,14 @@ function getQueryletiable(letiable: string) {
 
 function drawPlayer() {
   // console.log(`${playerPos.x} ${playerPos.y} ${playerPos.r}`);
+  // playerPos.x = 100;
+  // playerPos.y = 100;
+
   playerCtx.clearRect(0, 0, 400, 400);
   playerCtx.fillStyle = "#66CCFF";
   playerCtx.save();
   playerCtx.translate((playerPos.x - 80) * scale, (playerPos.y - 80) * scale);
   playerCtx.rotate(Math.PI - playerPos.r);
-  playerCtx.beginPath();
-  // playerCtx.scale(1, -1);
-  // playerCtx.translate(0, -height);
-  playerCtx.arc(0, 0, 6, 0, Math.PI * 2);
-  // playerCtx.arc(playerPos.x, playerPos.x, 6, 0, Math.PI * 2);
-  playerCtx.closePath();
-  playerCtx.fill();
 
   playerCtx.beginPath();
   playerCtx.moveTo(0, -12);
@@ -281,13 +302,24 @@ function drawPlayer() {
   playerCtx.lineTo(6, 0);
   playerCtx.closePath();
   playerCtx.fill();
+  playerCtx.stroke();
 
+  playerCtx.beginPath();
+  playerCtx.arc(0, 0, 6, 0, Math.PI * 2);
+  playerCtx.closePath();
+  playerCtx.fill();
   playerCtx.globalCompositeOperation = "destination-out";
   playerCtx.beginPath();
   playerCtx.arc(0, 0, 3, 0, Math.PI * 2);
   playerCtx.closePath();
   playerCtx.fill();
   playerCtx.restore();
+
+  // playerCtx.lineWidth = 4;
+  // playerCtx.beginPath();
+  // playerCtx.arc(0, 0, 10 / 2, 0, Math.PI * 2);
+  // playerCtx.stroke();
+  // playerCtx.restore();
 }
 
 function clear() {
@@ -297,19 +329,16 @@ function clear() {
   zooCtx.clearRect(0, 0, size, size);
   playerCtx.clearRect(0, 0, size, size);
   fireCtx.clearRect(0, 0, size, size);
-  pythonsCtx.clearRect(0, 0, size, size);
-  Hide(true);
+  // pythonsCtx.clearRect(0, 0, size, size);
+  // Hide(true);
 }
 
 function draw() {
   if (!hide) {
-    // if (zoneID != ZoneId.TheMinstrelsBalladZodiarksFall)
-    //   return;
-    // isClockwise = 1;
     ctx.save();
     ctx.clearRect(0, 0, size, size);
-    ctx.globalCompositeOperation = "destination-over";
     ctx.translate(0, 0);
+    ctx.globalCompositeOperation = "destination-over";
     ctx.drawImage(player, 0, 0);
     ctx.drawImage(fire, 0, 0);
     ctx.translate(zoo.width / 2, zoo.height / 2);
@@ -358,8 +387,8 @@ function drawZoo(param: number) {
     case 0x0f:
       drawPythons(Loc.L);
       break;
-    case 0x10: // 右半场
-    case 0x0e:
+    case 0x0e: // 右半场
+    case 0x10:
       drawPythons(Loc.R);
       break;
     case 0x11: // 上半场
@@ -377,7 +406,7 @@ function drawZoo(param: number) {
 
 function Hide(isHide: boolean) {
   hide = isHide;
-  if (verbose) console.log(`Hide=${hide}`);
+  if (verbose) console.log(`Hide=${isHide}`);
   if (isHide) {
     document.getElementById("field")!.style.background = `rgba(82, 82, 82,0)`;
   } else {
@@ -385,6 +414,29 @@ function Hide(isHide: boolean) {
       "field"
     )!.style.background = `rgba(82, 82, 82,${transparence})`;
   }
+}
+
+function addUnlockText() {
+  const unlockText = {
+    en: "🔓 Unlocked (lock overlay before using)",
+    de: "🔓 Entsperrt (Sperre das Overlay vor der Nutzung)",
+    fr: "🔓 Débloqué (Bloquez l'overlay avant utilisation)",
+    ja: "🔓 ロック解除 (オーバーレイを使用する前にロックしてください)",
+    cn: "🔓 已解除锁定 (你需要将此悬浮窗锁定后方可使用)",
+    ko: "🔓 위치 잠금 해제됨 (사용하기 전에 위치 잠금을 설정하세요)",
+  };
+
+  const id = "cactbot-unlocked-text";
+  let textElem = document.getElementById(id);
+  if (!textElem) {
+    textElem = document.createElement("div");
+    textElem.id = id;
+    textElem.classList.add("text");
+    // Set element display to none in case the page has not included defaults.css.
+    textElem.style.display = "none";
+    document.body.append(textElem);
+  }
+  textElem.innerHTML = unlockText["cn"];
 }
 
 function OnPlayerChange(e: Parameters<EventMap["onPlayerChangedEvent"]>[0]) {
@@ -398,12 +450,11 @@ function OnPlayerChange(e: Parameters<EventMap["onPlayerChangedEvent"]>[0]) {
 }
 
 function OnMapEffect(e: Parameters<EventMap["onMapEffectEvent"]>[0]) {
-  if (zoneID != ZoneID.TheMinstrelsBalladZodiarksFall) return;
+  if (!actived) return;
   switch (e.detail.parm2) {
     case 0x0020_0010:
-      Hide(false);
       drawZoo(e.detail.parm3);
-      setTimeout(clear, 30000);
+      // setTimeout(clear, 30000);
       break;
     case 0x0002_0001: // /
       if ((e.detail.parm3 & 0xff) == 5) {
@@ -422,29 +473,64 @@ function OnMapEffect(e: Parameters<EventMap["onMapEffectEvent"]>[0]) {
 }
 
 function OnNetLog(e: EventResponses["LogLine"]): void {
-  if (zoneID != ZoneID.TheMinstrelsBalladZodiarksFall) return;
+  if (!actived) return;
   const type = e.line[0];
-  if (type === logDefinitions.StartsUsing.type) {
-    const skill = e.line[4];
-    switch (skill) {
-      case "6662":
-        isClockwise = 1;
-        // setTimeout(clear, 8000)
-        break;
-      case "6663":
-        isClockwise = -1;
-        // setTimeout(clear, 8000)
-        break;
-      // default:
-      //   console.log(skill);
+  switch (type) {
+    case logDefinitions.StartsUsing.type: {
+      const skill = e.line[4];
+      switch (skill) {
+        case "6662":
+        case "662F": // EX Only
+        case "6EC9":
+          isClockwise = 1;
+          // setTimeout(clear, 8000)
+          break;
+        case "6663": // EX Only
+        case "6630":
+          isClockwise = -1;
+          // setTimeout(clear, 8000)
+          break;
+        case "67BF":
+        case "67C8":
+          Hide(false);
+          break;
+        // default:
+        //   console.log(skill);
+      }
+      break;
+    }
+    case logDefinitions.Ability.type: {
+      const ability = e.line[4];
+      switch (ability) {
+        case "67C6":
+        case "67C7":
+        case "67E1":
+        case "67E2":
+        case "67E3":
+          // 各种动物放完技能了
+          setTimeout(clear, 5000);
+          break;
+      }
+      break;
     }
   }
 }
 
-function OnChangeZone(e: Parameters<EventMap["ChangeZone"]>[0]) {
-  zoneID = e.zoneID;
-  Hide(zoneID != ZoneID.TheMinstrelsBalladZodiarksFall);
+const ZodiarkZoneIds: Number[] = [
+  ZoneID.TheDarkInside,
+  ZoneID.TheMinstrelsBalladZodiarksFall,
+];
 
+function OnChangeZone(e: Parameters<EventMap["ChangeZone"]>[0]) {
+  let zoneID = e.zoneID;
+  actived = ZodiarkZoneIds.includes(zoneID);
+  // actived = true;
+  Hide(!actived);
+  if (actived) {
+    console.log("Entry Zodiark's Zone");
+  }
+  // else Hide(true);
+  // Hide(!(zoneID in ZodiarkZoneIds));
   // if (debug) {
   //   Hide(false);
   // }
@@ -487,49 +573,27 @@ if (typeof document !== "undefined") {
     }
   });
 }
-
-function addUnlockText() {
-  const unlockText = {
-    en: "🔓 Unlocked (lock overlay before using)",
-    de: "🔓 Entsperrt (Sperre das Overlay vor der Nutzung)",
-    fr: "🔓 Débloqué (Bloquez l'overlay avant utilisation)",
-    ja: "🔓 ロック解除 (オーバーレイを使用する前にロックしてください)",
-    cn: "🔓 已解除锁定 (你需要将此悬浮窗锁定后方可使用)",
-    ko: "🔓 위치 잠금 해제됨 (사용하기 전에 위치 잠금을 설정하세요)",
-  };
-
-  const id = "cactbot-unlocked-text";
-  let textElem = document.getElementById(id);
-  if (!textElem) {
-    textElem = document.createElement("div");
-    textElem.id = id;
-    textElem.classList.add("text");
-    // Set element display to none in case the page has not included defaults.css.
-    textElem.style.display = "none";
-    document.body.append(textElem);
-  }
-  textElem.innerHTML = unlockText["cn"];
+if (debug) {
+  addOverlayListener("onLogEvent", (e) => {
+    e.detail.logs.forEach((log) => {
+      // Match "/echo tts:<stuff>"
+      // console.log(log);
+      const r = /00:0038::zdk:clear/.exec(log);
+      if (r) {
+        // console.log("zdk:clear");
+        clear();
+      }
+      const r1 = /00:0038::zdk:drawZoo:(.*)/.exec(log);
+      if (r1 && r1[1]) {
+        // console.log("zdk:clear");
+        let a = r1[1];
+        drawZoo(parseInt(a, 16));
+      }
+      const r2 = /00:0038::zdk:drawFire/.exec(log);
+      if (r2) {
+        // console.log("zdk:clear");
+        drawFires(true);
+      }
+    });
+  });
 }
-// addOverlayListener("onLogEvent", (e) => {
-//   e.detail.logs.forEach((log) => {
-//     // Match "/echo tts:<stuff>"
-//     // console.log(log);
-//     const r = /00:0038::clearPic/.exec(log);
-//     if (r) {
-//       console.log("clearPic");
-//       clear();
-//     }
-
-//     const r1 = /00:0038::picr/.exec(log);
-//     if (r1) {
-//       console.log("right");
-//       isClockwise = 1;
-//     }
-
-//     const r2 = /00:0038::picl/.exec(log);
-//     if (r2) {
-//       console.log("left");
-//       isClockwise = -1;
-//     }
-//   });
-// });

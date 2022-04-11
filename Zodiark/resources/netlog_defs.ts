@@ -1,4 +1,4 @@
-import { NetFieldsReverse } from '../types/net_fields';
+import { NetFieldsReverse } from "../types/net_fields";
 
 export type LogDefinition = {
   type: string;
@@ -33,9 +33,9 @@ export type LogDefinitionMap = { [name: string]: LogDefinition };
 
 const logDefinitions = {
   GameLog: {
-    type: '00',
-    name: 'GameLog',
-    messageType: 'ChatLog',
+    type: "00",
+    name: "GameLog",
+    messageType: "ChatLog",
     fields: {
       type: 0,
       timestamp: 1,
@@ -45,29 +45,29 @@ const logDefinitions = {
     },
     subFields: {
       code: {
-        '0039': {
-          name: 'message',
+        "0039": {
+          name: "message",
           canAnonymize: true,
         },
-        '0038': {
-          name: 'echo',
+        "0038": {
+          name: "echo",
           canAnonymize: true,
         },
-        '0044': {
-          name: 'dialog',
+        "0044": {
+          name: "dialog",
           canAnonymize: true,
         },
-        '0839': {
-          name: 'message',
+        "0839": {
+          name: "message",
           canAnonymize: true,
         },
       },
     },
   },
   ChangeZone: {
-    type: '01',
-    name: 'ChangeZone',
-    messageType: 'Territory',
+    type: "01",
+    name: "ChangeZone",
+    messageType: "Territory",
     fields: {
       type: 0,
       timestamp: 1,
@@ -78,9 +78,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   ChangedPlayer: {
-    type: '02',
-    name: 'ChangedPlayer',
-    messageType: 'ChangePrimaryPlayer',
+    type: "02",
+    name: "ChangedPlayer",
+    messageType: "ChangePrimaryPlayer",
     fields: {
       type: 0,
       timestamp: 1,
@@ -94,9 +94,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   AddedCombatant: {
-    type: '03',
-    name: 'AddedCombatant',
-    messageType: 'AddCombatant',
+    type: "03",
+    name: "AddedCombatant",
+    messageType: "AddCombatant",
     fields: {
       type: 0,
       timestamp: 1,
@@ -127,9 +127,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   RemovedCombatant: {
-    type: '04',
-    name: 'RemovedCombatant',
-    messageType: 'RemoveCombatant',
+    type: "04",
+    name: "RemovedCombatant",
+    messageType: "RemoveCombatant",
     fields: {
       type: 0,
       timestamp: 1,
@@ -154,9 +154,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   PartyList: {
-    type: '11',
-    name: 'PartyList',
-    messageType: 'PartyList',
+    type: "11",
+    name: "PartyList",
+    messageType: "PartyList",
     fields: {
       type: 0,
       timestamp: 1,
@@ -213,38 +213,16 @@ const logDefinitions = {
       26: null,
     },
     optionalFields: [
-      3,
-      4,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10,
-      11,
-      12,
-      13,
-      14,
-      15,
-      16,
-      17,
-      18,
-      19,
-      20,
-      21,
-      22,
-      23,
-      24,
-      25,
-      26,
+      3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22,
+      23, 24, 25, 26,
     ],
     canAnonymize: true,
     lastInclude: true,
   },
   PlayerStats: {
-    type: '12',
-    name: 'PlayerStats',
-    messageType: 'PlayerStats',
+    type: "12",
+    name: "PlayerStats",
+    messageType: "PlayerStats",
     fields: {
       type: 0,
       timestamp: 1,
@@ -270,9 +248,9 @@ const logDefinitions = {
     lastInclude: true,
   },
   StartsUsing: {
-    type: '20',
-    name: 'StartsUsing',
-    messageType: 'StartsCasting',
+    type: "20",
+    name: "StartsUsing",
+    messageType: "StartsCasting",
     fields: {
       type: 0,
       timestamp: 1,
@@ -296,9 +274,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   Ability: {
-    type: '21',
-    name: 'Ability',
-    messageType: 'ActionEffect',
+    type: "21",
+    name: "Ability",
+    messageType: "ActionEffect",
     fields: {
       type: 0,
       timestamp: 1,
@@ -341,9 +319,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   NetworkAOEAbility: {
-    type: '22',
-    name: 'NetworkAOEAbility',
-    messageType: 'AOEActionEffect',
+    type: "22",
+    name: "NetworkAOEAbility",
+    messageType: "AOEActionEffect",
     fields: {
       type: 0,
       timestamp: 1,
@@ -368,9 +346,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   NetworkCancelAbility: {
-    type: '23',
-    name: 'NetworkCancelAbility',
-    messageType: 'CancelAction',
+    type: "23",
+    name: "NetworkCancelAbility",
+    messageType: "CancelAction",
     fields: {
       type: 0,
       timestamp: 1,
@@ -386,9 +364,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   NetworkDoT: {
-    type: '24',
-    name: 'NetworkDoT',
-    messageType: 'DoTHoT',
+    type: "24",
+    name: "NetworkDoT",
+    messageType: "DoTHoT",
     fields: {
       type: 0,
       timestamp: 1,
@@ -414,9 +392,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   WasDefeated: {
-    type: '25',
-    name: 'WasDefeated',
-    messageType: 'Death',
+    type: "25",
+    name: "WasDefeated",
+    messageType: "Death",
     fields: {
       type: 0,
       timestamp: 1,
@@ -432,9 +410,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   GainsEffect: {
-    type: '26',
-    name: 'GainsEffect',
-    messageType: 'StatusAdd',
+    type: "26",
+    name: "GainsEffect",
+    messageType: "StatusAdd",
     fields: {
       type: 0,
       timestamp: 1,
@@ -456,9 +434,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   HeadMarker: {
-    type: '27',
-    name: 'HeadMarker',
-    messageType: 'TargetIcon',
+    type: "27",
+    name: "HeadMarker",
+    messageType: "TargetIcon",
     fields: {
       type: 0,
       timestamp: 1,
@@ -472,9 +450,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   NetworkRaidMarker: {
-    type: '28',
-    name: 'NetworkRaidMarker',
-    messageType: 'WaymarkMarker',
+    type: "28",
+    name: "NetworkRaidMarker",
+    messageType: "WaymarkMarker",
     fields: {
       type: 0,
       timestamp: 1,
@@ -489,9 +467,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   NetworkTargetMarker: {
-    type: '29',
-    name: 'NetworkTargetMarker',
-    messageType: 'SignMarker',
+    type: "29",
+    name: "NetworkTargetMarker",
+    messageType: "SignMarker",
     fields: {
       type: 0,
       timestamp: 1,
@@ -508,9 +486,9 @@ const logDefinitions = {
     },
   },
   LosesEffect: {
-    type: '30',
-    name: 'LosesEffect',
-    messageType: 'StatusRemove',
+    type: "30",
+    name: "LosesEffect",
+    messageType: "StatusRemove",
     fields: {
       type: 0,
       timestamp: 1,
@@ -529,9 +507,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   NetworkGauge: {
-    type: '31',
-    name: 'NetworkGauge',
-    messageType: 'Gauge',
+    type: "31",
+    name: "NetworkGauge",
+    messageType: "Gauge",
     fields: {
       type: 0,
       timestamp: 1,
@@ -550,9 +528,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   NetworkWorld: {
-    type: '32',
-    name: 'NetworkWorld',
-    messageType: 'World',
+    type: "32",
+    name: "NetworkWorld",
+    messageType: "World",
     fields: {
       type: 0,
       timestamp: 1,
@@ -560,9 +538,9 @@ const logDefinitions = {
     isUnknown: true,
   },
   ActorControl: {
-    type: '33',
-    name: 'ActorControl',
-    messageType: 'Director',
+    type: "33",
+    name: "ActorControl",
+    messageType: "Director",
     fields: {
       type: 0,
       timestamp: 1,
@@ -576,9 +554,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   NameToggle: {
-    type: '34',
-    name: 'NameToggle',
-    messageType: 'NameToggle',
+    type: "34",
+    name: "NameToggle",
+    messageType: "NameToggle",
     fields: {
       type: 0,
       timestamp: 1,
@@ -595,9 +573,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   Tether: {
-    type: '35',
-    name: 'Tether',
-    messageType: 'Tether',
+    type: "35",
+    name: "Tether",
+    messageType: "Tether",
     fields: {
       type: 0,
       timestamp: 1,
@@ -615,9 +593,9 @@ const logDefinitions = {
     firstUnknownField: 9,
   },
   LimitBreak: {
-    type: '36',
-    name: 'LimitBreak',
-    messageType: 'LimitBreak',
+    type: "36",
+    name: "LimitBreak",
+    messageType: "LimitBreak",
     fields: {
       type: 0,
       timestamp: 1,
@@ -627,9 +605,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   NetworkEffectResult: {
-    type: '37',
-    name: 'NetworkEffectResult',
-    messageType: 'EffectResult',
+    type: "37",
+    name: "NetworkEffectResult",
+    messageType: "EffectResult",
     fields: {
       type: 0,
       timestamp: 1,
@@ -654,9 +632,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   StatusEffect: {
-    type: '38',
-    name: 'StatusEffect',
-    messageType: 'StatusList',
+    type: "38",
+    name: "StatusEffect",
+    messageType: "StatusList",
     fields: {
       type: 0,
       timestamp: 1,
@@ -683,9 +661,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   NetworkUpdateHP: {
-    type: '39',
-    name: 'NetworkUpdateHP',
-    messageType: 'UpdateHp',
+    type: "39",
+    name: "NetworkUpdateHP",
+    messageType: "UpdateHp",
     fields: {
       type: 0,
       timestamp: 1,
@@ -708,9 +686,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   Map: {
-    type: '40',
-    name: 'Map',
-    messageType: 'ChangeMap',
+    type: "40",
+    name: "Map",
+    messageType: "ChangeMap",
     fields: {
       type: 0,
       timestamp: 1,
@@ -722,9 +700,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   SystemLogMessage: {
-    type: '41',
-    name: 'SystemLogMessage',
-    messageType: 'SystemLogMessage',
+    type: "41",
+    name: "SystemLogMessage",
+    messageType: "SystemLogMessage",
     fields: {
       type: 0,
       timestamp: 1,
@@ -737,9 +715,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   ParserInfo: {
-    type: '249',
-    name: 'ParserInfo',
-    messageType: 'Settings',
+    type: "249",
+    name: "ParserInfo",
+    messageType: "Settings",
     fields: {
       type: 0,
       timestamp: 1,
@@ -748,9 +726,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   ProcessInfo: {
-    type: '250',
-    name: 'ProcessInfo',
-    messageType: 'Process',
+    type: "250",
+    name: "ProcessInfo",
+    messageType: "Process",
     fields: {
       type: 0,
       timestamp: 1,
@@ -759,9 +737,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   Debug: {
-    type: '251',
-    name: 'Debug',
-    messageType: 'Debug',
+    type: "251",
+    name: "Debug",
+    messageType: "Debug",
     fields: {
       type: 0,
       timestamp: 1,
@@ -770,9 +748,9 @@ const logDefinitions = {
     canAnonymize: false,
   },
   PacketDump: {
-    type: '252',
-    name: 'PacketDump',
-    messageType: 'PacketDump',
+    type: "252",
+    name: "PacketDump",
+    messageType: "PacketDump",
     fields: {
       type: 0,
       timestamp: 1,
@@ -780,9 +758,9 @@ const logDefinitions = {
     canAnonymize: false,
   },
   Version: {
-    type: '253',
-    name: 'Version',
-    messageType: 'Version',
+    type: "253",
+    name: "Version",
+    messageType: "Version",
     fields: {
       type: 0,
       timestamp: 1,
@@ -791,9 +769,9 @@ const logDefinitions = {
     canAnonymize: true,
   },
   Error: {
-    type: '254',
-    name: 'Error',
-    messageType: 'Error',
+    type: "254",
+    name: "Error",
+    messageType: "Error",
     fields: {
       type: 0,
       timestamp: 1,
@@ -801,9 +779,9 @@ const logDefinitions = {
     canAnonymize: false,
   },
   None: {
-    type: '[0-9]+',
-    name: 'None',
-    messageType: 'None',
+    type: "[0-9]+",
+    name: "None",
+    messageType: "None",
     fields: {
       type: 0,
       timestamp: 1,
@@ -822,14 +800,18 @@ export type LogDefinitionTypes = keyof LogDefinitions;
 export type ParseHelperField<
   Type extends LogDefinitionTypes,
   Fields extends NetFieldsReverse[Type],
-  Field extends keyof Fields,
-  > = {
-    field: Fields[Field] extends string ? Fields[Field] : never;
-    value?: string;
-  };
+  Field extends keyof Fields
+> = {
+  field: Fields[Field] extends string ? Fields[Field] : never;
+  value?: string;
+};
 
 export type ParseHelperFields<T extends LogDefinitionTypes> = {
-  [field in keyof NetFieldsReverse[T]]: ParseHelperField<T, NetFieldsReverse[T], field>;
+  [field in keyof NetFieldsReverse[T]]: ParseHelperField<
+    T,
+    NetFieldsReverse[T],
+    field
+  >;
 };
 
 export default logDefinitions;
