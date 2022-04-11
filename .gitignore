@@ -5,6 +5,7 @@ obj/
 packages/
 user/
 logs/
+.cache/
 
 !user/README.txt
 plugin/**/*.csproj.user
