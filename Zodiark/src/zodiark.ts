@@ -1,33 +1,25 @@
-import {
-  addOverlayListener,
-  callOverlayHandler,
-} from "./resources/overlay_plugin_api";
-import { EventMap } from "./types/event";
-import { EventResponses } from "./types/event";
-import logDefinitions from "./resources/netlog_defs";
-import ZoneID from "./resources/zone_id";
-import "./resources/defaults.css";
+import "./style.css";
+import { addOverlayListener } from "../resources/overlay_plugin_api";
+import { EventMap } from "../types/event";
+import { EventResponses } from "../types/event";
+import logDefinitions from "../resources/netlog_defs";
+import ZoneID from "../resources/zone_id";
+import "../resources/defaults.css";
 // class Zodiark { }
 const getCanvasElementById = (id: string): HTMLCanvasElement => {
   const canvas = document.getElementById(id);
 
   if (!(canvas instanceof HTMLCanvasElement)) {
-    throw new Error(
-      `The element of id "${id}" is not a HTMLCanvasElement. Make sure a <canvas id="${id}""> element is present in the document.`
-    );
+    throw new Error(`The element of id "${id}" is not a HTMLCanvasElement. Make sure a <canvas id="${id}""> element is present in the document.`);
   }
 
   return canvas;
 };
-const getCanvasRenderingContext2D = (
-  canvas: HTMLCanvasElement
-): CanvasRenderingContext2D => {
+const getCanvasRenderingContext2D = (canvas: HTMLCanvasElement): CanvasRenderingContext2D => {
   const context = canvas.getContext("2d");
 
   if (context === null) {
-    throw new Error(
-      "This browser does not support 2-dimensional canvas rendering contexts."
-    );
+    throw new Error("This browser does not support 2-dimensional canvas rendering contexts.");
   }
 
   return context;
@@ -56,28 +48,20 @@ enum Loc {
   B,
 }
 
-const verbose = true;
-const debug = false;
+const debug = ["127.0.0.1", "localhost"].includes(window.location.host);
 let hide = true;
 let actived = false;
 
-const ctx: CanvasRenderingContext2D = getCanvasRenderingContext2D(
-  getCanvasElementById("field")
-);
+const ctx: CanvasRenderingContext2D = getCanvasRenderingContext2D(getCanvasElementById("field"));
 // Quetzalcoatl 89.5 110.5
 // Behemoth     89.5 110.5
 // Python       (79.5 (84.5 105.5)) (79.5 (94.5 115.5))  (121 (84.5 105.5)) (121 (94.5 94.5))
 // (80, 120)(120, 120)
 // (80, 80)(120, 80)
 const size = 400;
-let transparence = getQueryletiable("transparence");
-if (transparence === "false") {
-  transparence = "0.5";
-}
+let transparence = new URLSearchParams(location.search).get("transparence") ?? 0.5;
 addUnlockText();
-getCanvasElementById(
-  "field"
-).style.background = `rgba(82, 82, 82,${transparence})`;
+getCanvasElementById("field").style.background = `rgba(82, 82, 82,${transparence})`;
 // ctx.fillStyle = 'rgba(82, 82, 82, 0.5)'
 // getCanvasElementById('field').style.width = '400px'
 // getCanvasElementById('field').style.height = '400px'
@@ -114,12 +98,7 @@ playerCtx.strokeStyle = playerCtx.fillStyle;
 // draw();
 window.requestAnimationFrame(draw);
 
-function drawChariot(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  radius: number
-) {
+function drawChariot(ctx: CanvasRenderingContext2D, x: number, y: number, radius: number) {
   ctx.save();
   ctx.beginPath();
   // ctx.fillStyle = "rgba(255,249,192,0.5)";
@@ -133,13 +112,7 @@ function drawChariot(
   ctx.restore();
 }
 
-function drawDynamo(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  r1: number,
-  r2: number
-) {
+function drawDynamo(ctx: CanvasRenderingContext2D, x: number, y: number, r1: number, r2: number) {
   ctx.save();
   // ctx.fillStyle = "rgba(255,249,192,0.8)";
   x = (x - 80) * scale;
@@ -155,14 +128,7 @@ function drawDynamo(
   ctx.restore();
 }
 
-function drawStripe(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  direction: Direction
-) {
+function drawStripe(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, direction: Direction) {
   if (direction == Direction.H) {
     y = y - h / 2;
   } else {
@@ -181,14 +147,7 @@ function drawStripe(
   ctx.restore();
 }
 
-function drawArc(
-  ctx: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  radius: number,
-  startAngle: number,
-  endAngle: number
-) {
+function drawArc(ctx: CanvasRenderingContext2D, x: number, y: number, radius: number, startAngle: number, endAngle: number) {
   ctx.save();
   ctx.beginPath();
   // ctx.fillStyle = "rgba(255,249,192,0.5)";
@@ -203,18 +162,14 @@ function drawArc(
 }
 
 function drawQuetzalcoatl(h: Loc, v: Loc) {
-  if (verbose) {
-    console.log(`月环:${h},${v}`);
-  }
+  if (debug) console.debug(`月环:${h},${v}`);
   let x = h == Loc.L ? 89.5 : 110.5;
   let y = v == Loc.T ? 89.5 : 110.5;
   drawDynamo(zooCtx, x, y, 15, 5);
 }
 
 function drawBehemoth(h: Loc, v: Loc) {
-  if (verbose) {
-    console.log(`钢铁:${h},${v}`);
-  }
+  if (debug) console.debug(`钢铁:${h},${v}`);
   let x = h == Loc.L ? 89.5 : 110.5;
   let y = v == Loc.T ? 89.5 : 110.5;
   drawChariot(zooCtx, x, y, 15);
@@ -223,30 +178,22 @@ function drawBehemoth(h: Loc, v: Loc) {
 function drawPythons(p: Loc) {
   switch (p) {
     case Loc.T:
-      if (verbose) {
-        console.log(`上蛇`);
-      }
+      if (debug) console.debug(`上蛇`);
       drawStripe(zooCtx, 79.5, 84.5, 42, 11, Direction.H);
       drawStripe(zooCtx, 79.5, 105.5, 42, 11, Direction.H);
       break;
     case Loc.B:
-      if (verbose) {
-        console.log(`下蛇`);
-      }
+      if (debug) console.debug(`下蛇`);
       drawStripe(zooCtx, 79.5, 94.5, 42, 11, Direction.H);
       drawStripe(zooCtx, 79.5, 115.5, 42, 11, Direction.H);
       break;
     case Loc.L:
-      if (verbose) {
-        console.log(`左蛇`);
-      }
+      if (debug) console.debug(`左蛇`);
       drawStripe(zooCtx, 84.5, 79.5, 42, 11, Direction.V);
       drawStripe(zooCtx, 105.5, 79.5, 42, 11, Direction.V);
       break;
     case Loc.R:
-      if (verbose) {
-        console.log(`右蛇`);
-      }
+      if (debug) console.debug(`右蛇`);
       drawStripe(zooCtx, 94.5, 79.5, 42, 11, Direction.V);
       drawStripe(zooCtx, 115.5, 79.5, 42, 11, Direction.V);
       break;
@@ -254,7 +201,6 @@ function drawPythons(p: Loc) {
 }
 
 function drawFires(isHorizontal: boolean) {
-  // Hide(false)
   let startAngle = isHorizontal ? -45 : +45;
   let start = startAngle * (Math.PI / 180);
   let end = (startAngle + 90) * (Math.PI / 180);
@@ -272,17 +218,6 @@ function showExample() {
   drawQuetzalcoatl(Loc.R, Loc.B);
   drawFires(true);
   drawPythons(Loc.L);
-}
-function getQueryletiable(letiable: string) {
-  let query = window.location.search.substring(1);
-  let lets = query.split("&");
-  for (let i = 0; i < lets.length; i++) {
-    let pair = lets[i].split("=");
-    if (pair[0] == letiable) {
-      return pair[1];
-    }
-  }
-  return false;
 }
 
 function drawPlayer() {
@@ -323,7 +258,7 @@ function drawPlayer() {
 }
 
 function clear() {
-  console.log("[Zodiark] Canvas clear!");
+  if (debug) console.debug("[Zodiark] Canvas clear!");
   isClockwise = 0;
   ctx.clearRect(0, 0, size, size);
   zooCtx.clearRect(0, 0, size, size);
@@ -400,19 +335,17 @@ function drawZoo(param: number) {
       drawPythons(Loc.B);
       break;
     default:
-      console.log(`Ukn param: ${param}`);
+      if (debug) console.warn(`Ukn param: ${param}`);
   }
 }
 
 function Hide(isHide: boolean) {
   hide = isHide;
-  if (verbose) console.log(`Hide=${isHide}`);
+  if (debug) console.debug(`Hide=${isHide}`);
   if (isHide) {
     document.getElementById("field")!.style.background = `rgba(82, 82, 82,0)`;
   } else {
-    document.getElementById(
-      "field"
-    )!.style.background = `rgba(82, 82, 82,${transparence})`;
+    document.getElementById("field")!.style.background = `rgba(82, 82, 82,${transparence})`;
   }
 }
 
@@ -447,29 +380,6 @@ function OnPlayerChange(e: Parameters<EventMap["onPlayerChangedEvent"]>[0]) {
   drawPlayer();
   // let z = e.detail.pos.z;
   // let playerRotation = e.detail.rotation;
-}
-
-function OnMapEffect(e: Parameters<EventMap["onMapEffectEvent"]>[0]) {
-  if (!actived) return;
-  switch (e.detail.parm2) {
-    case 0x0020_0010:
-      drawZoo(e.detail.parm3);
-      // setTimeout(clear, 30000);
-      break;
-    case 0x0002_0001: // /
-      if ((e.detail.parm3 & 0xff) == 5) {
-        drawFires(isClockwise == 1);
-      }
-      break;
-    case 0x0040_0020: // \
-      if ((e.detail.parm3 & 0xff) == 5) {
-        drawFires(isClockwise == -1);
-      }
-      break;
-    default:
-      break;
-    // console.log(`Ukn param: ${e.detail.parm2}`);
-  }
 }
 
 function OnNetLog(e: EventResponses["LogLine"]): void {
@@ -513,55 +423,53 @@ function OnNetLog(e: EventResponses["LogLine"]): void {
       }
       break;
     }
+    case logDefinitions.MapEffect.type: {
+      // const instance = e.line[2];
+      const flags = e.line[3];
+      const location = parseInt(e.line[4], 16);
+      // const data0 = parseInt(e.line[5], 16);
+      // const data1 = e.line[6];
+      switch (flags) {
+        case "00200010":
+          drawZoo(location);
+          // setTimeout(clear, 30000);
+          break;
+        case "00020001": // /
+          if ((location & 0xff) == 5) {
+            drawFires(isClockwise == 1);
+          }
+          break;
+        case "00400020": // \
+          if ((location & 0xff) == 5) {
+            drawFires(isClockwise == -1);
+          }
+          break;
+        default:
+          break;
+        // console.log(`Ukn flags: ${flags}`);
+      }
+    }
   }
 }
 
-const ZodiarkZoneIds: Number[] = [
-  ZoneID.TheDarkInside,
-  ZoneID.TheMinstrelsBalladZodiarksFall,
-];
+const ZodiarkZoneIds: Number[] = [ZoneID.TheDarkInside, ZoneID.TheMinstrelsBalladZodiarksFall];
 
 function OnChangeZone(e: Parameters<EventMap["ChangeZone"]>[0]) {
   let zoneID = e.zoneID;
   actived = ZodiarkZoneIds.includes(zoneID);
-  // actived = true;
   Hide(!actived);
-  if (actived) {
-    console.log("Entry Zodiark's Zone");
-  }
-  // else Hide(true);
-  // Hide(!(zoneID in ZodiarkZoneIds));
-  // if (debug) {
-  //   Hide(false);
-  // }
-  // if (hide && debug) {
-  //   document.getElementById(
-  //     "field"
-  //   )!.style.background = `rgba(82, 82, 82,${transparence})`;
-  // }
+  if (actived) console.debug("Entry Zodiark's Zone");
 }
 
-addOverlayListener("onMapEffectEvent", (e) => {
-  // console.log(e.detail);
-  OnMapEffect(e);
-});
+addOverlayListener("onPlayerChangedEvent", OnPlayerChange);
 
-addOverlayListener("onPlayerChangedEvent", (e) => {
-  OnPlayerChange(e);
-});
+addOverlayListener("ChangeZone", OnChangeZone);
 
-addOverlayListener("ChangeZone", (e) => {
-  OnChangeZone(e);
-});
-
-addOverlayListener("LogLine", (e) => {
-  OnNetLog(e);
-});
+addOverlayListener("LogLine", OnNetLog);
 
 if (typeof document !== "undefined") {
   // This event comes early and is not cached, so set up event listener immediately.
   document.addEventListener("onOverlayStateUpdate", (e) => {
-    // console.log(e.detail.isLocked);
     const docClassList = document.documentElement.classList;
     Hide(e.detail.isLocked);
     if (e.detail.isLocked) {
@@ -576,22 +484,20 @@ if (typeof document !== "undefined") {
 if (debug) {
   addOverlayListener("onLogEvent", (e) => {
     e.detail.logs.forEach((log) => {
-      // Match "/echo tts:<stuff>"
-      // console.log(log);
       const r = /00:0038::zdk:clear/.exec(log);
       if (r) {
-        // console.log("zdk:clear");
+        console.log("zdk:clear");
         clear();
       }
       const r1 = /00:0038::zdk:drawZoo:(.*)/.exec(log);
       if (r1 && r1[1]) {
-        // console.log("zdk:clear");
+        console.log("zdk:drawZoo");
         let a = r1[1];
         drawZoo(parseInt(a, 16));
       }
       const r2 = /00:0038::zdk:drawFire/.exec(log);
       if (r2) {
-        // console.log("zdk:clear");
+        console.log("zdk:drawFire");
         drawFires(true);
       }
     });

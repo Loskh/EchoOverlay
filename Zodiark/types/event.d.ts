@@ -42,8 +42,8 @@ export interface JobDetail {
     fairyStatus: number;
   };
   'AST': {
-    heldCard: 'Balance' | 'Bole' | 'Arrow' | 'Spear' | 'Ewer' | 'Spire';
-    crownCard: 'Lord' | 'Lady';
+    heldCard: 'None' | 'Balance' | 'Bole' | 'Arrow' | 'Spear' | 'Ewer' | 'Spire';
+    crownCard: 'None' | 'Lord' | 'Lady';
     arcanums: ('Solar' | 'Lunar' | 'Celestial')[];
   };
   'SGE': {
@@ -122,14 +122,6 @@ export interface JobDetail {
     aetherflowStacks: number;
   };
   'SMN': {
-    // TODO: remove this after CN/KR patch 6.0 released.
-    stanceMilliseconds: number;
-    bahamutStance: 5 | 0;
-    bahamutSummoned: 1 | 0;
-    aetherflowStacks: number;
-    dreadwyrmStacks: number;
-    phoenixReady: number;
-  } | {
     aetherflowStacks: number;
     tranceMilliseconds: number;
     attunementMilliseconds: number;
@@ -144,6 +136,41 @@ export interface JobDetail {
     manaStacks: number;
   };
 }
+
+export type EnmityTargetCombatant = {
+  ID: number;
+  OwnerID: number;
+  Type: number;
+  MonsterType: number;
+  Status: number;
+  ModelStatus: number;
+  AggressionStatus: number;
+  TargetID: number;
+  IsTargetable: boolean;
+
+  Job: number;
+  Name: string;
+
+  CurrentHP: number;
+  MaxHP: number;
+
+  PosX: number;
+  PosY: number;
+  PosZ: number;
+  Rotation: number;
+  Radius: number;
+
+  Distance: string;
+  EffectiveDistance: string;
+
+  Effects: {
+    BuffID: number;
+    Stack: number;
+    Timer: number;
+    ActorID: number;
+    isOwner: boolean;
+  }[];
+};
 
 export interface EventMap {
   // #region OverlayPlugin built-in Event
@@ -194,12 +221,19 @@ export interface EventMap {
 
   'EnmityTargetData': (ev: {
     type: 'EnmityTargetData';
-    Target: {
-      Name: string;
+    Target: EnmityTargetCombatant | null;
+    Focus: EnmityTargetCombatant | null;
+    Hover: EnmityTargetCombatant | null;
+    TargetOfTarget: EnmityTargetCombatant | null;
+    Entries: {
       ID: number;
-      Distance: number;
-      EffectiveDistance: number;
-    };
+      OwnerID: number;
+      Name: string;
+      Enmity: number;
+      isMe: boolean;
+      HateRate: number;
+      Job: number;
+    }[] | null;
   }) => void;
   // #endregion
 
@@ -247,36 +281,8 @@ export interface EventMap {
     };
   }) => void;
 
-  'onFateEvent': (ev: {
-    type: 'onFateEvent';
-    detail: {
-      eventType: 'add' | 'update' | 'remove';
-      fateID: number;
-      progress: number;
-    };
-  }) => void;
-
-  'onCEEvent': (ev: {
-    type: 'onCEEvent';
-    detail: {
-      eventType: 'add' | 'update' | 'remove';
-      data: {
-        popTime: number;
-        timeRemaining: number;
-        ceKey: number;
-        numPlayers: number;
-        status: number;
-        progress: number;
-      };
-    };
-  }) => void;
-
   'onPlayerDied': (ev: {
     type: 'onPlayerDied';
-  }) => void;
-
-  'onPartyWipe': (ev: {
-    type: 'onPartyWipe';
   }) => void;
 
   'onPlayerChangedEvent': (ev: {
@@ -288,20 +294,6 @@ export interface EventMap {
     type: 'onUserFileChanged';
     file: string;
   }) => void;
-
-  'onMapEffectEvent': (ev: {
-    type: 'onMapEffectEvent';
-    detail: {
-      // eventType: 'add' | 'update' | 'remove';
-      actorId: number;
-      parm1: number;
-      parm2: number;
-      parm3: number;
-      parm4: number;
-
-    };
-  }) => void;
-
   // #endregion
 }
 
@@ -318,7 +310,15 @@ export type LogEvent = {
 
 export type EventType = keyof EventMap;
 
-interface CactbotLoadUserRet {
+interface SystemInfo {
+  cactbotVersion: string;
+  overlayPluginVersion: string;
+  ffxivPluginVersion: string;
+  actVersion: string;
+  gameRegion: 'International' | 'Chinese' | 'Korean';
+}
+
+interface CactbotLoadUserRet extends SystemInfo {
   userLocation: string;
   localUserFiles: { [filename: string]: string } | null;
   parserLanguage: Lang;
@@ -384,7 +384,8 @@ export interface PluginCombatantState {
   PartyType?: number;
   ID?: number;
   OwnerID?: number;
-  type?: number;
+  WeaponId?: number;
+  Type?: number;
   Job?: number;
   Level?: number;
   Name?: string;
@@ -396,6 +397,29 @@ export interface PluginCombatantState {
   PosY: number;
   PosZ: number;
   Heading: number;
+
+  MonsterType?: number;
+  Status?: number;
+  ModelStatus?: number;
+  AggressionStatus?: number;
+  TargetID?: number;
+  IsTargetable?: boolean;
+  Radius?: number;
+  Distance?: string;
+  EffectiveDistance?: string;
+  NPCTargetID?: number;
+  CurrentGP?: number;
+  MaxGP?: number;
+  CurrentCP?: number;
+  MaxCP?: number;
+  PCTargetID?: number;
+  IsCasting1?: number;
+  IsCasting2?: number;
+  CastBuffID?: number;
+  CastTargetID?: number;
+  CastDurationCurrent?: number;
+  CastDurationMax?: number;
+  TransformationId?: number;
 }
 
 type BroadcastHandler = (msg: {
@@ -453,11 +477,11 @@ type CactbotSaveDataHandler = (msg: {
 type CactbotLoadDataHandler = (msg: {
   call: 'cactbotLoadData';
   overlay: string;
-}) => ({ data: SavedConfig } | undefined);
+}) => { data: SavedConfig } | undefined;
 
 type CactbotChooseDirectoryHandler = (msg: {
   call: 'cactbotChooseDirectory';
-}) => ({ data: string } | undefined);
+}) => { data: string } | undefined;
 
 export type OverlayHandlerAll = {
   'broadcast': BroadcastHandler;
