@@ -154,7 +154,7 @@ const callOverlayHandlerInternal: IOverlayHandler = (
   } else {
     p = new Promise((resolve, reject) => {
       sendMessage(msg, (data) => {
-        if (!data) {
+        if (data === null) {
           resolve(data);
           return;
         }
@@ -273,7 +273,7 @@ export const init = (): void => {
       connectWs(wsUrl);
     } else {
       const waitForApi = function() {
-        if (!window.OverlayPluginApi || !window.OverlayPluginApi.ready) {
+        if (!window.OverlayPluginApi?.ready) {
           window.setTimeout(waitForApi, 300);
           return;
         }
