@@ -1,4 +1,3 @@
-import "./style.css";
 import { addOverlayListener } from "../resources/overlay_plugin_api";
 import { EventMap } from "../types/event";
 import { EventResponses } from "../types/event";
