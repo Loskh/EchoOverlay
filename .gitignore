@@ -30,3 +30,4 @@ __pycache__
 .venv
 env/
 venv/
+Zodiark/pnpm-lock.yaml
