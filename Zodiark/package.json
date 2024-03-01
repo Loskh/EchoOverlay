@@ -10,7 +10,8 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "typescript": "^5.0.2",
-    "vite": "^4.3.9"
+    "typescript": "^5.3.3",
+    "vite": "^5.1.4",
+    "vite-plugin-singlefile": "^2.0.0"
   }
 }
